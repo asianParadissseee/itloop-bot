@@ -10,7 +10,12 @@ async function bootstrap() {
   });
   const PORT = process.env.PORT || 5050;
   console.log('это бля bot token ', process.env.BOT_TOKEN);
-  app.use(cors);
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept',
+  });
+  app.use(cors());
   await app.listen(PORT, () =>
     console.log(`server running on port http://localhost:${PORT}`),
   );
