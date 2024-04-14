@@ -7,7 +7,7 @@ import { CreateBotDto } from './dto/create-bot.dto';
 export class BotService {
   private TOKEN = process.env.BOT_TOKEN;
   private CHAT_ID = process.env.CHAT_ID;
-  private API_URL = `https://api.telegram.org/bot${this.TOKEN}/sendMessage?chat_id=-4145136644`;
+  private API_URL = `https://api.telegram.org/bot${this.TOKEN}/sendMessage?chat_id=${this.CHAT_ID}`;
 
   getFormatData(data: CreateBotDto) {
     let messageDto = `Имя <b>${data.name}</b>\n`;
