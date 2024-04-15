@@ -8,13 +8,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: false,
   });
+  app.use(cors());
   const PORT = process.env.PORT || 5050;
   app.enableCors({
     origin: ['http://localhost:3000/', 'https://loop-school.vercel.app/'],
     allowedHeaders: 'Content-Type, Accept',
     credentials: true,
   });
-  app.use(cors());
   await app.listen(PORT, () =>
     console.log(`server running on port http://localhost:${PORT}`),
   );
