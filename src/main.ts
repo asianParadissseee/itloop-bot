@@ -10,10 +10,7 @@ async function bootstrap() {
   });
   const PORT = process.env.PORT || 5050;
   app.enableCors({
-    origin: [
-      'http://localhost:3000/',
-      'https://loop-school.vercel.app/'
-    ],
+    origin: ['http://localhost:3000/', 'https://loop-school.vercel.app/'],
     allowedHeaders: 'Content-Type, Accept',
     credentials: true,
   });
