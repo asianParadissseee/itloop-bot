@@ -6,21 +6,11 @@ import { configDotenv } from 'dotenv';
 async function bootstrap() {
   configDotenv();
   const app = await NestFactory.create(AppModule, {
-    cors: true,
+    cors: false,
   });
-  app.use(
-    cors({
-      origin: ['http://localhost:3000/', 'https://loop-school.vercel.app/'],
-      credentials: true,
-      optionsSuccessStatus: 201,
-    }),
-  );
+  app.use(cors());
   const PORT = process.env.PORT || 5050;
-  app.enableCors({
-    origin: ['http://localhost:3000/', 'https://loop-school.vercel.app/'],
-    allowedHeaders: 'Content-Type, Accept',
-    credentials: true,
-  });
+  app.enableCors();
   await app.listen(PORT, () =>
     console.log(`server running on port http://localhost:${PORT}`),
   );

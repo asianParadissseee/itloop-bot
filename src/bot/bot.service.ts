@@ -10,9 +10,7 @@ export class BotService {
   private API_URL = `https://api.telegram.org/bot${this.TOKEN}/sendMessage?chat_id=${this.CHAT_ID}`;
 
   getFormatData(data: CreateBotDto) {
-    let messageDto = `Имя <b>${data.name}</b>\n`;
-    messageDto += `Телефон <b>${data.phoneNumber}</b>\n`;
-    return messageDto;
+    return `<b>${data.text}</b>\n`;
   }
 
   async sendData(createBotDto: CreateBotDto) {
@@ -20,7 +18,7 @@ export class BotService {
       await axios.post(this.API_URL, {
         chat_id: this.CHAT_ID,
         parse_mode: 'html',
-        text: this.getFormatData(createBotDto),
+        text: createBotDto.text,
       });
       console.log(createBotDto);
     } catch (e) {
