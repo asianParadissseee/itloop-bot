@@ -26,8 +26,7 @@ import {
 @ApiTags('Books')
 @Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {
-  }
+  constructor(private readonly booksService: BooksService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('filePath'))
@@ -39,9 +38,8 @@ export class BooksController {
   async create(
     @Body() createBookDto: CreateBookDto,
     @UploadedFile() file: Express.Multer.File,
-    @UploadedFile() img: Express.Multer.File,
   ) {
-    return await this.booksService.create(createBookDto, file, img);
+    return await this.booksService.create(createBookDto, file);
   }
 
   @Get()

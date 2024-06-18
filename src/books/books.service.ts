@@ -7,17 +7,25 @@ import { BookEntity } from './entities/book.entity';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
+import { Injectable } from '@nestjs/common';
+import { CreateBookDto } from './dto/create-book.dto';
+import { UpdateBookDto } from './dto/update-book.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BookEntity } from './entities/book.entity';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(BookEntity)
     private booksRepository: Repository<BookEntity>,
-  ){}
+  ) {}
 
   async create(
     createBookDto: CreateBookDto,
     file: Express.Multer.File,
-    img: Express.Multer.File,
   ) {
     const book = new BookEntity();
     book.name = createBookDto.name;
@@ -28,15 +36,6 @@ export class BooksService {
     book.bbc = createBookDto.bbc;
     book.img = createBookDto.img;
     book.length = createBookDto.length;
-    if (img) {
-      const uploadImgDir = path.join(__dirname, '..', 'images');
-      if (!fs.existsSync(uploadImgDir)) {
-        fs.mkdirSync(uploadImgDir);
-        const uploadPath = path.join(uploadImgDir, file.originalname);
-        fs.writeFileSync(uploadPath, file.buffer);
-        book.img = uploadPath;
-      }
-    }
     if (file) {
       const uploadsDir = path.join(__dirname, '..', 'uploads');
 
@@ -47,18 +46,32 @@ export class BooksService {
 
       const uploadPath = path.join(uploadsDir, file.originalname);
       fs.writeFileSync(uploadPath, file.buffer);
-      book.filePath = uploadPath;
+      book.filePath = file.originalname; // Store only the filename
     }
 
     return await this.booksRepository.save(book);
   }
 
   async findAll(): Promise<BookEntity[]> {
-    return await this.booksRepository.find();
+    const books = await this.booksRepository.find();
+    const hostUrl = 'http://localhost:8080/uploads/'; // Base URL for file access
+
+    return books.map(book => {
+      if (book.filePath) {
+        book.filePath = `${hostUrl}${book.filePath}`; // Construct the URL
+      }
+      return book;
+    });
   }
 
   async findOne(id: number): Promise<BookEntity> {
-    return await this.booksRepository.findOne({ where: { id } });
+    const book = await this.booksRepository.findOne({ where: { id } });
+    const hostUrl = 'http://localhost:8080/uploads/'; // Base URL for file access
+
+    if (book && book.filePath) {
+      book.filePath = `${hostUrl}${book.filePath}`; // Construct the URL
+    }
+    return book;
   }
 
   async update(id: number, updateBookDto: UpdateBookDto): Promise<BookEntity> {
